@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org" th:include="fragments/layout :: main(title='Black Business Directory')">
+
+<body>
+  <div th:fragment="content">
+    <table class="table mt-5">
+      <thead>
+        <tr>
+          <th scope="col">Business Name</th>
+          <th scope="col">Contact Info</th>
+          <th scope="col">Website</th>
+          <th scope="col">Location</th>
+          <th scope="col">category</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="item : ${business}">
+          <td th:text="${item.name}">Mark</td>
+          <td th:text="${item.email}">Otto</td>
+          <td><a th:text="${item.name}" th:href="${item.website}" target="_blank"></a></td>
+          <td th:text="${item.location}">Otto</td>
+          <td th:text="${item.category}">Otto</td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+</body>
+
+</html>
