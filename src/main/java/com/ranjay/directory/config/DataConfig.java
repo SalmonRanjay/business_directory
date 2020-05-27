@@ -1,9 +1,9 @@
 package com.ranjay.directory.config;
 
+import java.net.URISyntaxException;
 import java.util.Properties;
 
 import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.Logger;
@@ -47,16 +47,28 @@ public class DataConfig {
     @Value("${stripe.domain.package}")
     private String domainPackages;
 
+    // @Bean(name = "datasource")
+    // public DataSource datasSource() {
+    // BasicDataSource ds = new BasicDataSource();
+    // ds.setDriverClassName(driverClassName);
+    // ds.setUrl(url);
+    // ds.setUsername(username);
+    // ds.setPassword(password);
+    // System.out.println(ds.getPassword());
+    // return ds;
+    // }
+    @Bean
+    public BasicDataSource dataSource() throws URISyntaxException {
+        String dbUrl = System.getenv("JDBC_DATABASE_URL");
+        String username = System.getenv("JDBC_DATABASE_USERNAME");
+        String password = System.getenv("JDBC_DATABASE_PASSWORD");
 
-    @Bean(name = "datasource")
-    public DataSource datasSource() {
-        BasicDataSource ds = new BasicDataSource();
-        ds.setDriverClassName(driverClassName);
-        ds.setUrl(url);
-        ds.setUsername(username);
-        ds.setPassword(password);
-        System.out.println(ds.getPassword());
-        return ds;
+        BasicDataSource basicDataSource = new BasicDataSource();
+        basicDataSource.setUrl(dbUrl);
+        basicDataSource.setUsername(username);
+        basicDataSource.setPassword(password);
+
+        return basicDataSource;
     }
 
     private Properties getHibernateProperties() {
@@ -70,7 +82,7 @@ public class DataConfig {
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws URISyntaxException {
 
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         vendorAdapter.setGenerateDdl(true);
@@ -79,7 +91,7 @@ public class DataConfig {
         factory.setJpaVendorAdapter(vendorAdapter);
         factory.setPackagesToScan("com.ranjay.directory.model");
         // factory.setDataSource(dataSource());
-        factory.setDataSource(datasSource());
+        factory.setDataSource(dataSource());
         factory.setJpaProperties(getHibernateProperties());
         return factory;
     }
